@@ -420,7 +420,7 @@ export default function App() {
       <section id="portfolio" className="py-24 px-6 bg-black border-t border-gray-900">
         <div className="container mx-auto max-w-7xl">
           <div className="flex flex-col lg:flex-row justify-between items-end mb-16 gap-8">
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
               <h2 className="text-5xl md:text-7xl font-black uppercase leading-[0.85] tracking-tight text-white">
                 NUESTROS <br />
                 TRABAJOS
@@ -429,7 +429,7 @@ export default function App() {
             </div>
             
             {/* Filters - FORCED SINGLE LINE */}
-            <div className="flex flex-nowrap gap-0 overflow-x-auto max-w-full no-scrollbar">
+            <div className="hidden md:flex flex-nowrap gap-0 overflow-x-auto max-w-full no-scrollbar">
               <FilterButton active={filter === 'all'} onClick={() => setFilter('all')}>
                 Todos
               </FilterButton>
@@ -463,7 +463,7 @@ export default function App() {
       <section id="about" className="py-24 px-6 bg-[#0a0a0a]">
         <div className="container mx-auto max-w-6xl">
            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black uppercase mb-6 flex items-center justify-center gap-4">
+              <h2 className="text-4xl md:text-5xl font-black uppercase mb-6 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
                 <span className="text-[#ccff00]">BigdatIA</span> Tecnológico
               </h2>
               <p className="text-gray-400 max-w-2xl mx-auto text-lg">

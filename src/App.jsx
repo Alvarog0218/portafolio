@@ -362,7 +362,7 @@ export default function App() {
             <NavLink href="#home">Inicio</NavLink>
             <NavLink href="#portfolio">Proyectos</NavLink>
             <NavLink href="#about">Servicios</NavLink>
-            <a href="#contact" className="border-2 border-[#ccff00] text-[#ccff00] px-6 py-2 font-bold uppercase tracking-wider hover:bg-[#ccff00] hover:text-black transition-all">
+            <a href="https://wa.me/573164856744" target="_blank" rel="noopener noreferrer" className="border-2 border-[#ccff00] text-[#ccff00] px-6 py-2 font-bold uppercase tracking-wider hover:bg-[#ccff00] hover:text-black transition-all">
               Hablemos
             </a>
           </nav>
@@ -382,7 +382,7 @@ export default function App() {
             <NavLink mobile href="#home" onClick={() => setIsMenuOpen(false)}>Inicio</NavLink>
             <NavLink mobile href="#portfolio" onClick={() => setIsMenuOpen(false)}>Proyectos</NavLink>
             <NavLink mobile href="#about" onClick={() => setIsMenuOpen(false)}>Servicios</NavLink>
-            <NavLink mobile href="#contact" onClick={() => setIsMenuOpen(false)}>Hablemos</NavLink>
+            <NavLink mobile href="https://wa.me/573164856744" onClick={() => setIsMenuOpen(false)}>Hablemos</NavLink>
           </div>
         )}
       </header>
@@ -513,7 +513,7 @@ export default function App() {
             Lleva tu proyecto al siguiente nivel con nosotros.
           </p>
           
-          <a href="mailto:contacto@bigdatia.com" className="inline-flex items-center gap-3 border-2 border-white hover:bg-[#ccff00] hover:border-[#ccff00] hover:text-black text-white px-10 py-4 font-black text-lg uppercase tracking-wider transition-all mb-12">
+          <a href="https://wa.me/573164856744" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border-2 border-white hover:bg-[#ccff00] hover:border-[#ccff00] hover:text-black text-white px-10 py-4 font-black text-lg uppercase tracking-wider transition-all mb-12">
             <Mail size={24} /> Contactar
           </a>
 

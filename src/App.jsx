@@ -22,7 +22,7 @@ const portfolioData = [
     id: 1,
     title: "Daisho: Y si si?",
     category: "video",
-    image: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&q=80&w=800",
+    image: "Daisho.jpg",
     description: "Videoclip musical. Producción y post-producción con enfoque artístico.",
     videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoyNzI0ODA=", 
     tags: ["Music Video", "Production"]
@@ -31,7 +31,7 @@ const portfolioData = [
     id: 2,
     title: "McSatirik: Cosecha",
     category: "video",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800",
+    image: "Mcsatirik.jpg",
     description: "Producción audiovisual con estética urbana y narrativa visual.",
     videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoxMTIxNjk=", 
     tags: ["Urban", "Direction"]
@@ -40,7 +40,7 @@ const portfolioData = [
     id: 3,
     title: "Drou: Entre tu y yo",
     category: "video",
-    image: "https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&q=80&w=800",
+    image: "Drou.jpg",
     description: "Dirección de fotografía y montaje para pieza musical emotiva.",
     videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDo4ODUzNQ==",
     tags: ["Cinematography", "Editing"]
@@ -49,7 +49,7 @@ const portfolioData = [
     id: 4,
     title: "Fan art Saiko: Cosas que no te dije",
     category: "video",
-    image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800",
+    image: "Newyork.jpg",
     description: "Video arte conceptual inspirado en la obra de Saiko.",
     videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoxMjU3MTI=",
     tags: ["Fan Art", "Conceptual"]

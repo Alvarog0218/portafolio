@@ -29,30 +29,30 @@ const portfolioData = [
     tags: ["Music Video", "Production"]
   },
   {
-    id: 2,
-    title: "McSatirik: Cosecha",
-    category: "video",
-    image: "Mcsatirik.jpg",
-    description: "Producción audiovisual con estética urbana y narrativa visual.",
-    videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoxMTIxNjk=",
-    tags: ["Urban", "Direction"]
-  },
-  {
-    id: 3,
-    title: "Drou: Entre tu y yo",
-    category: "video",
-    image: "Drou.jpg",
-    description: "Dirección de fotografía y montaje para pieza musical emotiva.",
-    videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDo4ODUzNQ==",
-    tags: ["Cinematography", "Editing"]
-  },
-  {
     id: 4,
     title: "Fan art Saiko: Cosas que no te dije",
     category: "video",
     image: "Newyork.jpg",
     description: "Video arte conceptual inspirado en la obra de Saiko.",
     tags: ["Fan Art", "Conceptual"]
+  },
+  {
+    id: 2,
+    title: "Comercial Kioscos de Autopago UIS",
+    category: "video",
+    image: "Miniatura uis 1.jpg",
+    description: "Producción audiovisual institucional para la Universidad Industrial de Santander.",
+    videoUrl: "https://youtu.be/zhfGCCDJ9yw",
+    tags: ["Institutional", "Spot"]
+  },
+  {
+    id: 3,
+    title: "Aniversario 67 Escuela Microbiologia UIS",
+    category: "video",
+    image: "Miniatura uis 2.jpg",
+    description: "Cobertura y memoria audiovisual de evento aniversario.",
+    videoUrl: "https://youtu.be/jSCMPpVoebs",
+    tags: ["Event", "Memory"]
   },
 
   // --- SOCIAL (4 Items) ---

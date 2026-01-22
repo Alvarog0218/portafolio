@@ -34,6 +34,7 @@ const portfolioData = [
     category: "video",
     image: "Newyork.jpg",
     description: "Video arte conceptual inspirado en la obra de Saiko.",
+    videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoxMjU3MTI=",
     tags: ["Fan Art", "Conceptual"]
   },
   {

@@ -58,39 +58,39 @@ const portfolioData = [
   // --- SOCIAL (4 Items) ---
   {
     id: 13,
-    title: "Social Media 01",
+    title: "Restaurante Mexicano",
     category: "social",
-    image: "social1.jpg",
-    description: "Contenido estratégico formato vertical para redes.",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Placeholder
-    tags: ["Reels", "TikTok"]
+    image: "miniatura reel 1.jpg",
+    description: "Short publicitario para restaurante mexicano. Edición dinámica y apetitosa.",
+    videoUrl: "Reel 1.mp4",
+    tags: ["Gastronomy", "Commercial"]
   },
   {
     id: 14,
-    title: "Social Media 02",
+    title: "Postgrado UIS",
     category: "social",
-    image: "social2.jpg",
-    description: "Campaña viral para lanzamiento de producto.",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Placeholder
-    tags: ["Instagram", "Viral"]
+    image: "Miniatura reel 2.jpg",
+    description: "Promoción de oferta académica de posgrados UIS. Estilo institucional moderno.",
+    videoUrl: "Reel 2.mp4",
+    tags: ["Education", "Institutional"]
   },
   {
     id: 15,
-    title: "Social Media 03",
+    title: "Contenido Trading",
     category: "social",
-    image: "social3.jpg",
-    description: "Edición dinámica para retención de audiencia.",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Placeholder
-    tags: ["Shorts", "Dynamic"]
+    image: "Miniatura reel 3.jpg",
+    description: "Cápsula educativa sobre trading y finanzas. Formato ágil para redes.",
+    videoUrl: "Reel 3.mp4",
+    tags: ["Finance", "Education"]
   },
   {
     id: 16,
-    title: "Social Media 04",
+    title: "Webinar Trading",
     category: "social",
-    image: "social4.jpg",
-    description: "Storytelling visual adaptado a plataformas móviles.",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Placeholder
-    tags: ["Mobile", "Storytelling"]
+    image: "Miniatura reel 4.jpg",
+    description: "Highlight de webinar especializado en inversiones. Retención y valor.",
+    videoUrl: "Reel 4.mp4",
+    tags: ["Webinar", "Event"]
   },
 
   // --- BRANDING (4 Items) ---
@@ -280,7 +280,7 @@ const ProjectModal = ({ project, onClose }) => {
         <div className="grid md:grid-cols-2 gap-0">
           {/* Media Section */}
           <div className="bg-gray-900 min-h-[300px] md:h-full flex items-center justify-center relative border-r border-gray-800">
-            {(project.category === 'video' || project.category === 'social') ? (
+            {project.category === 'video' ? (
               <div className="w-full aspect-video">
                 <iframe
                   className="w-full h-full"
@@ -290,6 +290,15 @@ const ProjectModal = ({ project, onClose }) => {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
+              </div>
+            ) : project.category === 'social' ? (
+              <div className="w-full h-full max-h-[80vh] flex items-center justify-center bg-black">
+                <video
+                  controls
+                  autoPlay
+                  className="max-w-full max-h-full object-contain"
+                  src={project.videoUrl}
+                />
               </div>
             ) : (
               <img
@@ -350,7 +359,7 @@ const ProjectModal = ({ project, onClose }) => {
                   <Download size={20} /> Ver Manual PDF
                 </a>
               )}
-              {(project.category === 'video' || project.category === 'social') && (
+              {project.category === 'video' && (
                 <a
                   href={project.videoUrl}
                   target="_blank"
@@ -360,6 +369,7 @@ const ProjectModal = ({ project, onClose }) => {
                   <Play size={20} /> Ver Video Original
                 </a>
               )}
+
             </div>
           </div>
         </div>

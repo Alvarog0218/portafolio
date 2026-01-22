@@ -224,6 +224,7 @@ const ProjectCard = ({ item, onClick }) => {
         <img
           src={item.image}
           alt={item.title}
+          loading="lazy"
           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
           onError={(e) => {
             e.target.onerror = null;
@@ -384,16 +385,19 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Preload videos after 1 second
+  // Preload videos after 1 second (Only on Desktop)
   useEffect(() => {
     const preloadTimer = setTimeout(() => {
-      const socialVideos = portfolioData.filter(item => item.category === 'social');
-      socialVideos.forEach(video => {
-        const videoElement = document.createElement('video');
-        videoElement.src = video.videoUrl;
-        videoElement.preload = 'auto';
-        videoElement.muted = true;
-      });
+      // Check if device is desktop (width > 768px)
+      if (window.innerWidth > 768) {
+        const socialVideos = portfolioData.filter(item => item.category === 'social');
+        socialVideos.forEach(video => {
+          const videoElement = document.createElement('video');
+          videoElement.src = video.videoUrl;
+          videoElement.preload = 'auto';
+          videoElement.muted = true;
+        });
+      }
     }, 1000);
 
     return () => clearTimeout(preloadTimer);

@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Monitor, 
-  Video, 
-  BookOpen, 
-  X, 
-  ExternalLink, 
-  Github, 
-  Linkedin, 
-  Mail, 
-  Menu, 
-  Play, 
-  Download, 
+import {
+  Monitor,
+  Video,
+  BookOpen,
+  X,
+  ExternalLink,
+  Github,
+  Linkedin,
+  Mail,
+  Menu,
+  Play,
+  Download,
   Layers,
-  ChevronRight
+  ChevronRight,
+  Smartphone
 } from 'lucide-react';
 
 // --- DATOS DEL PORTAFOLIO ---
@@ -24,7 +25,7 @@ const portfolioData = [
     category: "video",
     image: "Daisho.jpg",
     description: "Videoclip musical. Producción y post-producción con enfoque artístico.",
-    videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoyNzI0ODA=", 
+    videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoyNzI0ODA=",
     tags: ["Music Video", "Production"]
   },
   {
@@ -33,7 +34,7 @@ const portfolioData = [
     category: "video",
     image: "Mcsatirik.jpg",
     description: "Producción audiovisual con estética urbana y narrativa visual.",
-    videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoxMTIxNjk=", 
+    videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoxMTIxNjk=",
     tags: ["Urban", "Direction"]
   },
   {
@@ -51,8 +52,45 @@ const portfolioData = [
     category: "video",
     image: "Newyork.jpg",
     description: "Video arte conceptual inspirado en la obra de Saiko.",
-    videoUrl: "https://itsnova.com/SEBVSTIVND/projects/Q3JlYXRpdmVXb3JrUG9ydGZvbGlvUHJvamVjdDoxMjU3MTI=",
     tags: ["Fan Art", "Conceptual"]
+  },
+
+  // --- SOCIAL (4 Items) ---
+  {
+    id: 13,
+    title: "Social Media 01",
+    category: "social",
+    image: "social1.jpg",
+    description: "Contenido estratégico formato vertical para redes.",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Placeholder
+    tags: ["Reels", "TikTok"]
+  },
+  {
+    id: 14,
+    title: "Social Media 02",
+    category: "social",
+    image: "social2.jpg",
+    description: "Campaña viral para lanzamiento de producto.",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Placeholder
+    tags: ["Instagram", "Viral"]
+  },
+  {
+    id: 15,
+    title: "Social Media 03",
+    category: "social",
+    image: "social3.jpg",
+    description: "Edición dinámica para retención de audiencia.",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Placeholder
+    tags: ["Shorts", "Dynamic"]
+  },
+  {
+    id: 16,
+    title: "Social Media 04",
+    category: "social",
+    image: "social4.jpg",
+    description: "Storytelling visual adaptado a plataformas móviles.",
+    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Placeholder
+    tags: ["Mobile", "Storytelling"]
   },
 
   // --- BRANDING (4 Items) ---
@@ -62,7 +100,7 @@ const portfolioData = [
     category: "branding",
     image: "manual-darrum.png",
     description: "Identidad corporativa para cafetería de especialidad.",
-    link: "darrum.pdf", 
+    link: "darrum.pdf",
     tags: ["Illustrator", "Identity"]
   },
   {
@@ -136,8 +174,8 @@ const portfolioData = [
 // Neon Green: #ccff00 (Usaremos lime-400/accent custom)
 
 const NavLink = ({ href, children, mobile = false, onClick }) => (
-  <a 
-    href={href} 
+  <a
+    href={href}
     onClick={onClick}
     className={`
       text-gray-400 hover:text-[#ccff00] transition-colors duration-300 font-bold tracking-wide uppercase text-sm
@@ -153,8 +191,8 @@ const FilterButton = ({ active, onClick, children, icon: Icon }) => (
     onClick={onClick}
     className={`
       flex items-center gap-2 px-6 py-2 rounded-none transition-all duration-300 border-2 uppercase font-bold tracking-wider text-sm whitespace-nowrap
-      ${active 
-        ? 'bg-[#ccff00] border-[#ccff00] text-black shadow-[0_0_15px_rgba(204,255,0,0.3)]' 
+      ${active
+        ? 'bg-[#ccff00] border-[#ccff00] text-black shadow-[0_0_15px_rgba(204,255,0,0.3)]'
         : 'bg-transparent border-gray-800 text-gray-500 hover:border-[#ccff00] hover:text-[#ccff00]'}
     `}
   >
@@ -165,8 +203,9 @@ const FilterButton = ({ active, onClick, children, icon: Icon }) => (
 
 const ProjectCard = ({ item, onClick }) => {
   const getIcon = () => {
-    switch(item.category) {
+    switch (item.category) {
       case 'video': return <Video size={20} />;
+      case 'social': return <Smartphone size={20} />;
       case 'web': return <Monitor size={20} />;
       case 'branding': return <BookOpen size={20} />;
       default: return <Layers size={20} />;
@@ -174,21 +213,21 @@ const ProjectCard = ({ item, onClick }) => {
   };
 
   return (
-    <div 
+    <div
       className="group relative bg-black rounded-sm overflow-hidden border border-gray-900 hover:border-[#ccff00] transition-all duration-300 cursor-pointer"
       onClick={() => onClick(item)}
     >
       {/* Imagen Thumbnail */}
       <div className="relative h-64 overflow-hidden">
         <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all duration-500 z-10" />
-        <img 
-          src={item.image} 
-          alt={item.title} 
+        <img
+          src={item.image}
+          alt={item.title}
           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
           onError={(e) => {
             e.target.onerror = null;
             // Fallback si la imagen local no carga
-            e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800"; 
+            e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
           }}
         />
         <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md p-2 text-[#ccff00] border border-[#ccff00]/30 z-20">
@@ -209,7 +248,7 @@ const ProjectCard = ({ item, onClick }) => {
         <p className="text-gray-400 text-sm line-clamp-2 font-medium">
           {item.description}
         </p>
-        
+
         {/* Tags */}
         {item.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-4">
@@ -231,7 +270,7 @@ const ProjectModal = ({ project, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-black w-full max-w-5xl max-h-[90vh] overflow-y-auto border border-gray-800 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 bg-black hover:bg-[#ccff00] hover:text-black border border-gray-800 text-white transition-colors z-50 rounded-full"
         >
@@ -241,21 +280,21 @@ const ProjectModal = ({ project, onClose }) => {
         <div className="grid md:grid-cols-2 gap-0">
           {/* Media Section */}
           <div className="bg-gray-900 min-h-[300px] md:h-full flex items-center justify-center relative border-r border-gray-800">
-            {project.category === 'video' ? (
-               <div className="w-full aspect-video">
-                 <iframe 
-                   className="w-full h-full"
-                   src={project.videoUrl} 
-                   title={project.title}
-                   frameBorder="0"
-                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                   allowFullScreen
-                 ></iframe>
-               </div>
+            {(project.category === 'video' || project.category === 'social') ? (
+              <div className="w-full aspect-video">
+                <iframe
+                  className="w-full h-full"
+                  src={project.videoUrl}
+                  title={project.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             ) : (
-              <img 
-                src={project.image} 
-                alt={project.title} 
+              <img
+                src={project.image}
+                alt={project.title}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
@@ -291,31 +330,31 @@ const ProjectModal = ({ project, onClose }) => {
 
             <div className="flex gap-4 mt-auto">
               {project.category === 'web' && (
-                <a 
-                  href={project.link} 
-                  target="_blank" 
+                <a
+                  href={project.link}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-[#ccff00] hover:bg-[#b3e600] text-black px-8 py-4 font-black uppercase tracking-wider transition-colors w-full justify-center"
                 >
-                   {project.title.includes('proceso') ? <Github size={20} /> : <ExternalLink size={20} />}
-                   {project.title.includes('proceso') ? 'Ver en GitHub' : 'Visitar Sitio'}
+                  {project.title.includes('proceso') ? <Github size={20} /> : <ExternalLink size={20} />}
+                  {project.title.includes('proceso') ? 'Ver en GitHub' : 'Visitar Sitio'}
                 </a>
               )}
               {project.category === 'branding' && (
-                <a 
-                  href={project.link} 
+                <a
+                  href={project.link}
                   target="_blank"
-                  rel="noopener noreferrer" 
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-white hover:bg-gray-200 text-black px-8 py-4 font-black uppercase tracking-wider transition-colors w-full justify-center"
                 >
                   <Download size={20} /> Ver Manual PDF
                 </a>
               )}
-               {project.category === 'video' && (
-                <a 
+              {(project.category === 'video' || project.category === 'social') && (
+                <a
                   href={project.videoUrl}
                   target="_blank"
-                  rel="noopener noreferrer" 
+                  rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-[#ccff00] hover:bg-[#b3e600] text-black px-8 py-4 font-black uppercase tracking-wider transition-colors w-full justify-center"
                 >
                   <Play size={20} /> Ver Video Original
@@ -343,13 +382,13 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const filteredProjects = filter === 'all' 
-    ? portfolioData 
+  const filteredProjects = filter === 'all'
+    ? portfolioData
     : portfolioData.filter(item => item.category === filter);
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-[#ccff00] selection:text-black">
-      
+
       {/* --- HEADER --- */}
       <header className={`fixed top-0 w-full z-40 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-md border-b border-gray-900 py-4' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
@@ -368,7 +407,7 @@ export default function App() {
           </nav>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
@@ -389,11 +428,11 @@ export default function App() {
 
       {/* --- HERO SECTION --- */}
       <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden flex items-center justify-center min-h-[80vh]">
-        
+
         {/* Abstract Geometry Background */}
         <div className="absolute inset-0 z-0 opacity-20">
-             <div className="absolute top-1/4 left-1/4 w-96 h-96 border border-[#ccff00] rounded-full blur-[100px]" />
-             <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-[#ccff00] rounded-full blur-[150px]" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 border border-[#ccff00] rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-[#ccff00] rounded-full blur-[150px]" />
         </div>
 
         <div className="container mx-auto max-w-6xl relative z-10 text-center">
@@ -403,11 +442,11 @@ export default function App() {
               A OTRO NIVEL
             </span>
           </h1>
-          
+
           <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-12 font-medium">
             Transformación digital, producción audiovisual de alto impacto e identidades de marca que rompen el molde.
           </p>
-          
+
           <div className="flex flex-col md:flex-row justify-center gap-6">
             <a href="#portfolio" className="bg-[#ccff00] text-black px-10 py-4 font-black text-lg uppercase tracking-wider hover:bg-white transition-colors flex items-center justify-center gap-2">
               Ver Portafolio <ChevronRight size={20} strokeWidth={3} />
@@ -427,7 +466,7 @@ export default function App() {
               </h2>
               <div className="h-2 w-24 bg-[#ccff00] mt-4"></div>
             </div>
-            
+
             {/* Filters - FORCED SINGLE LINE */}
             <div className="hidden md:flex flex-nowrap gap-0 overflow-x-auto max-w-full no-scrollbar">
               <FilterButton active={filter === 'all'} onClick={() => setFilter('all')}>
@@ -435,6 +474,9 @@ export default function App() {
               </FilterButton>
               <FilterButton icon={Video} active={filter === 'video'} onClick={() => setFilter('video')}>
                 Video
+              </FilterButton>
+              <FilterButton icon={Smartphone} active={filter === 'social'} onClick={() => setFilter('social')}>
+                Social
               </FilterButton>
               <FilterButton icon={BookOpen} active={filter === 'branding'} onClick={() => setFilter('branding')}>
                 Branding
@@ -449,9 +491,9 @@ export default function App() {
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredProjects.map((project) => (
-              <ProjectCard 
-                key={project.id} 
-                item={project} 
+              <ProjectCard
+                key={project.id}
+                item={project}
                 onClick={setSelectedProject}
               />
             ))}
@@ -462,46 +504,46 @@ export default function App() {
       {/* --- SERVICES / ABOUT --- */}
       <section id="about" className="py-24 px-6 bg-[#0a0a0a]">
         <div className="container mx-auto max-w-6xl">
-           <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-black uppercase mb-6 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
-                <span className="text-[#ccff00]">BigdatIA</span> Tecnológico
-              </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-                Soluciones integrales para la era digital.
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black uppercase mb-6 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
+              <span className="text-[#ccff00]">BigdatIA</span> Tecnológico
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+              Soluciones integrales para la era digital.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div className="p-8 border border-gray-800 hover:border-[#ccff00] transition-colors group">
+              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 text-[#ccff00] group-hover:bg-[#ccff00] group-hover:text-black transition-colors">
+                <Monitor size={32} />
+              </div>
+              <h3 className="text-xl font-bold uppercase mb-4">Desarrollo Web</h3>
+              <p className="text-gray-500 text-sm">
+                Asesoría tecnológica y desarrollo de soluciones personalizadas para transformación digital.
               </p>
-           </div>
+            </div>
 
-           <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div className="p-8 border border-gray-800 hover:border-[#ccff00] transition-colors group">
-                <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 text-[#ccff00] group-hover:bg-[#ccff00] group-hover:text-black transition-colors">
-                  <Monitor size={32} />
-                </div>
-                <h3 className="text-xl font-bold uppercase mb-4">Desarrollo Web</h3>
-                <p className="text-gray-500 text-sm">
-                  Asesoría tecnológica y desarrollo de soluciones personalizadas para transformación digital.
-                </p>
+            <div className="p-8 border border-gray-800 hover:border-[#ccff00] transition-colors group">
+              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 text-[#ccff00] group-hover:bg-[#ccff00] group-hover:text-black transition-colors">
+                <Video size={32} />
               </div>
+              <h3 className="text-xl font-bold uppercase mb-4">Producción Audiovisual</h3>
+              <p className="text-gray-500 text-sm">
+                Creación de contenido visual dinámico, edición profesional y dirección de arte.
+              </p>
+            </div>
 
-              <div className="p-8 border border-gray-800 hover:border-[#ccff00] transition-colors group">
-                <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 text-[#ccff00] group-hover:bg-[#ccff00] group-hover:text-black transition-colors">
-                  <Video size={32} />
-                </div>
-                <h3 className="text-xl font-bold uppercase mb-4">Producción Audiovisual</h3>
-                <p className="text-gray-500 text-sm">
-                  Creación de contenido visual dinámico, edición profesional y dirección de arte.
-                </p>
+            <div className="p-8 border border-gray-800 hover:border-[#ccff00] transition-colors group">
+              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 text-[#ccff00] group-hover:bg-[#ccff00] group-hover:text-black transition-colors">
+                <Layers size={32} />
               </div>
-
-              <div className="p-8 border border-gray-800 hover:border-[#ccff00] transition-colors group">
-                <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 text-[#ccff00] group-hover:bg-[#ccff00] group-hover:text-black transition-colors">
-                  <Layers size={32} />
-                </div>
-                <h3 className="text-xl font-bold uppercase mb-4">Branding & IA</h3>
-                <p className="text-gray-500 text-sm">
-                  Optimización de procesos con automatización e inteligencia artificial.
-                </p>
-              </div>
-           </div>
+              <h3 className="text-xl font-bold uppercase mb-4">Branding & IA</h3>
+              <p className="text-gray-500 text-sm">
+                Optimización de procesos con automatización e inteligencia artificial.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -512,7 +554,7 @@ export default function App() {
           <p className="text-gray-400 mb-10 text-xl">
             Lleva tu proyecto al siguiente nivel con nosotros.
           </p>
-          
+
           <a href="https://wa.me/573164856744" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border-2 border-white hover:bg-[#ccff00] hover:border-[#ccff00] hover:text-black text-white px-10 py-4 font-black text-lg uppercase tracking-wider transition-all mb-12">
             <Mail size={24} /> Contactar
           </a>
@@ -531,9 +573,9 @@ export default function App() {
 
       {/* MODAL OVERLAY */}
       {selectedProject && (
-        <ProjectModal 
-          project={selectedProject} 
-          onClose={() => setSelectedProject(null)} 
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
         />
       )}
     </div>

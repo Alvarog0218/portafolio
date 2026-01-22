@@ -280,37 +280,28 @@ const ProjectModal = ({ project, onClose }) => {
         <div className="grid md:grid-cols-2 gap-0">
           {/* Media Section */}
           <div className="bg-gray-900 min-h-[300px] md:h-full flex items-center justify-center relative border-r border-gray-800">
-            {project.category === 'video' ? (
-              <div className="w-full aspect-video">
-                <iframe
-                  className="w-full h-full"
-                  src={project.videoUrl}
-                  title={project.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            ) : project.category === 'social' ? (
-              <div className="w-full h-full max-h-[80vh] flex items-center justify-center bg-black">
-                <video
-                  controls
-                  autoPlay
-                  className="max-w-full max-h-full object-contain"
-                  src={project.videoUrl}
+            {/* Social Videos (Reels) - Play directly */
+              project.category === 'social' ? (
+                <div className="w-full h-full max-h-[80vh] flex items-center justify-center bg-black">
+                  <video
+                    controls
+                    autoPlay
+                    className="max-w-full max-h-full object-contain"
+                    src={project.videoUrl}
+                  />
+                </div>
+              ) : (
+                /* Image Only for other categories (Video, Branding, Web) */
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
+                  }}
                 />
-              </div>
-            ) : (
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
-                }}
-              />
-            )}
+              )}
           </div>
 
           {/* Info Section */}
@@ -366,7 +357,7 @@ const ProjectModal = ({ project, onClose }) => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-[#ccff00] hover:bg-[#b3e600] text-black px-8 py-4 font-black uppercase tracking-wider transition-colors w-full justify-center"
                 >
-                  <Play size={20} /> Ver Video Original
+                  <Play size={20} /> Ver Video
                 </a>
               )}
 

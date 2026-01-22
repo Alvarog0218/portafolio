@@ -383,6 +383,21 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Preload videos after 1 second
+  useEffect(() => {
+    const preloadTimer = setTimeout(() => {
+      const socialVideos = portfolioData.filter(item => item.category === 'social');
+      socialVideos.forEach(video => {
+        const videoElement = document.createElement('video');
+        videoElement.src = video.videoUrl;
+        videoElement.preload = 'auto';
+        videoElement.muted = true;
+      });
+    }, 1000);
+
+    return () => clearTimeout(preloadTimer);
+  }, []);
+
   const filteredProjects = filter === 'all'
     ? portfolioData
     : portfolioData.filter(item => item.category === filter);

@@ -213,6 +213,16 @@ const scheduleIdle = (callback, timeout = 1200) => {
   return () => window.clearTimeout(timerId);
 };
 
+const getThumbSrc = (image) => {
+  const fileName = image
+    .replace(/\.[^.]+$/, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  return `/thumbs/${fileName}-sm.jpg`;
+};
+
 const ProjectCard = React.memo(({ item, onClick }) => {
   const getIcon = () => {
     switch (item.category) {
@@ -233,7 +243,7 @@ const ProjectCard = React.memo(({ item, onClick }) => {
       <div className="relative h-64 overflow-hidden">
         <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all duration-500 z-10" />
         <img
-          src={`/${item.image}`}
+          src={getThumbSrc(item.image)}
           alt={item.title}
           loading="lazy"
           decoding="async"
@@ -300,7 +310,8 @@ const ProjectModal = ({ project, onClose }) => {
                 <div className="w-full h-full max-h-[80vh] flex items-center justify-center bg-black">
                   <video
                     controls
-                    autoPlay
+                    preload="metadata"
+                    poster={getThumbSrc(project.image)}
                     className="max-w-full max-h-full object-contain"
                     src={project.videoUrl}
                   />
@@ -308,8 +319,10 @@ const ProjectModal = ({ project, onClose }) => {
               ) : (
                 /* Image Only for other categories (Video, Branding, Web) */
                 <img
-                  src={project.image}
+                  src={`/${project.image}`}
                   alt={project.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.target.onerror = null;
@@ -402,7 +415,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    let stopIdle = scheduleIdle(() => setIsPortfolioReady(true));
+    const isMobileViewport = window.matchMedia('(max-width: 767px)').matches;
+    let stopIdle = scheduleIdle(() => setIsPortfolioReady(true), isMobileViewport ? 3500 : 1200);
 
     if (!('IntersectionObserver' in window) || !portfolioSectionRef.current) {
       return stopIdle;
@@ -416,7 +430,7 @@ export default function App() {
           stopIdle();
         }
       },
-      { rootMargin: '650px 0px' }
+      { rootMargin: isMobileViewport ? '420px 0px' : '650px 0px' }
     );
 
     observer.observe(portfolioSectionRef.current);
@@ -522,7 +536,7 @@ export default function App() {
       </section>
 
       {/* --- PORTFOLIO SECTION --- */}
-      <section id="portfolio" ref={portfolioSectionRef} className="py-24 px-6 bg-black border-t border-gray-900">
+      <section id="portfolio" ref={portfolioSectionRef} className="py-24 px-6 bg-black border-t border-gray-900 [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container mx-auto max-w-7xl">
           <div className="flex flex-col lg:flex-row justify-between items-center lg:items-end mb-16 gap-8 text-center lg:text-left">
             <div className="flex flex-col items-center lg:items-start w-full lg:w-auto">
@@ -604,7 +618,7 @@ export default function App() {
       </section>
 
       {/* --- SERVICES / ABOUT --- */}
-      <section id="about" className="py-24 px-6 bg-[#0a0a0a]">
+      <section id="about" className="py-24 px-6 bg-[#0a0a0a] [content-visibility:auto] [contain-intrinsic-size:720px]">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black uppercase mb-6 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
@@ -650,7 +664,7 @@ export default function App() {
       </section>
 
       {/* --- CONTACT FOOTER --- */}
-      <footer id="contact" className="py-20 px-6 bg-black border-t border-gray-900">
+      <footer id="contact" className="py-20 px-6 bg-black border-t border-gray-900 [content-visibility:auto] [contain-intrinsic-size:520px]">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-5xl font-black mb-8 uppercase text-white">¿Hablamos?</h2>
           <p className="text-gray-400 mb-10 text-xl">

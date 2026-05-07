@@ -13,6 +13,7 @@ import {
   Download,
   Layers,
   ChevronRight,
+  ChevronDown,
   Smartphone
 } from 'lucide-react';
 
@@ -376,6 +377,7 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -406,6 +408,16 @@ export default function App() {
   const filteredProjects = filter === 'all'
     ? portfolioData
     : portfolioData.filter(item => item.category === filter);
+
+  const filterOptions = [
+    { id: 'all', label: 'Todos', icon: null },
+    { id: 'video', label: 'Video', icon: Video },
+    { id: 'social', label: 'Social', icon: Smartphone },
+    { id: 'branding', label: 'Branding', icon: BookOpen },
+    { id: 'web', label: 'Web', icon: Monitor },
+  ];
+
+  const currentFilterLabel = filterOptions.find(opt => opt.id === filter)?.label || 'Todos';
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-[#ccff00] selection:text-black">
@@ -479,8 +491,8 @@ export default function App() {
       {/* --- PORTFOLIO SECTION --- */}
       <section id="portfolio" className="py-24 px-6 bg-black border-t border-gray-900">
         <div className="container mx-auto max-w-7xl">
-          <div className="flex flex-col lg:flex-row justify-between items-end mb-16 gap-8">
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <div className="flex flex-col lg:flex-row justify-between items-center lg:items-end mb-16 gap-8 text-center lg:text-left">
+            <div className="flex flex-col items-center lg:items-start w-full lg:w-auto">
               <h2 className="text-5xl md:text-7xl font-black uppercase leading-[0.85] tracking-tight text-white">
                 NUESTROS <br />
                 TRABAJOS
@@ -488,24 +500,52 @@ export default function App() {
               <div className="h-2 w-24 bg-[#ccff00] mt-4"></div>
             </div>
 
-            {/* Filters - FORCED SINGLE LINE */}
-            <div className="hidden md:flex flex-nowrap gap-0 overflow-x-auto max-w-full no-scrollbar">
-              <FilterButton active={filter === 'all'} onClick={() => setFilter('all')}>
-                Todos
-              </FilterButton>
-              <FilterButton icon={Video} active={filter === 'video'} onClick={() => setFilter('video')}>
-                Video
-              </FilterButton>
-              <FilterButton icon={Smartphone} active={filter === 'social'} onClick={() => setFilter('social')}>
-                Social
-              </FilterButton>
-              <FilterButton icon={BookOpen} active={filter === 'branding'} onClick={() => setFilter('branding')}>
-                Branding
-              </FilterButton>
-              {/* Web al final como solicitaste */}
-              <FilterButton icon={Monitor} active={filter === 'web'} onClick={() => setFilter('web')}>
-                Web
-              </FilterButton>
+            {/* Desktop Filters */}
+            <div className="hidden lg:flex flex-nowrap gap-0">
+              {filterOptions.map((opt) => (
+                <FilterButton
+                  key={opt.id}
+                  icon={opt.icon}
+                  active={filter === opt.id}
+                  onClick={() => setFilter(opt.id)}
+                >
+                  {opt.label}
+                </FilterButton>
+              ))}
+            </div>
+
+            {/* Mobile Filter Dropdown */}
+            <div className="lg:hidden w-full max-w-xs relative mt-4">
+              <button
+                onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                className="w-full flex items-center justify-between px-6 py-3 bg-black border-2 border-[#ccff00] text-[#ccff00] font-bold uppercase tracking-wider text-sm"
+              >
+                <span className="flex items-center gap-2">
+                  {filterOptions.find(opt => opt.id === filter)?.icon && React.createElement(filterOptions.find(opt => opt.id === filter).icon, { size: 16 })}
+                  {currentFilterLabel}
+                </span>
+                <ChevronDown size={20} className={`transition-transform duration-300 ${isFilterDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isFilterDropdownOpen && (
+                <div className="absolute top-full left-0 w-full bg-black border-2 border-t-0 border-[#ccff00] z-30 animate-in slide-in-from-top-2">
+                  {filterOptions.map((opt) => (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        setFilter(opt.id);
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-6 py-4 text-sm font-bold uppercase tracking-wider transition-colors flex items-center gap-3
+                        ${filter === opt.id ? 'bg-[#ccff00] text-black' : 'text-gray-400 hover:text-[#ccff00]'}
+                      `}
+                    >
+                      {opt.icon && <opt.icon size={16} />}
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

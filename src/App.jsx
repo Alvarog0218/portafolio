@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import {
   Monitor,
   Video,
@@ -203,7 +203,17 @@ const FilterButton = ({ active, onClick, children, icon: Icon }) => (
   </button>
 );
 
-const ProjectCard = ({ item, onClick }) => {
+const scheduleIdle = (callback, timeout = 1200) => {
+  if ('requestIdleCallback' in window) {
+    const idleId = window.requestIdleCallback(callback, { timeout });
+    return () => window.cancelIdleCallback(idleId);
+  }
+
+  const timerId = window.setTimeout(callback, timeout);
+  return () => window.clearTimeout(timerId);
+};
+
+const ProjectCard = React.memo(({ item, onClick }) => {
   const getIcon = () => {
     switch (item.category) {
       case 'video': return <Video size={20} />;
@@ -223,9 +233,11 @@ const ProjectCard = ({ item, onClick }) => {
       <div className="relative h-64 overflow-hidden">
         <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all duration-500 z-10" />
         <img
-          src={item.image}
+          src={`/${item.image}`}
           alt={item.title}
           loading="lazy"
+          decoding="async"
+          fetchPriority="low"
           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
           onError={(e) => {
             e.target.onerror = null;
@@ -265,7 +277,7 @@ const ProjectCard = ({ item, onClick }) => {
       </div>
     </div>
   );
-};
+});
 
 const ProjectModal = ({ project, onClose }) => {
   if (!project) return null;
@@ -378,6 +390,8 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [isPortfolioReady, setIsPortfolioReady] = useState(false);
+  const portfolioSectionRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -387,27 +401,37 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Preload videos after 1 second (Only on Desktop)
   useEffect(() => {
-    const preloadTimer = setTimeout(() => {
-      // Check if device is desktop (width > 768px)
-      if (window.innerWidth > 768) {
-        const socialVideos = portfolioData.filter(item => item.category === 'social');
-        socialVideos.forEach(video => {
-          const videoElement = document.createElement('video');
-          videoElement.src = video.videoUrl;
-          videoElement.preload = 'auto';
-          videoElement.muted = true;
-        });
-      }
-    }, 1000);
+    let stopIdle = scheduleIdle(() => setIsPortfolioReady(true));
 
-    return () => clearTimeout(preloadTimer);
+    if (!('IntersectionObserver' in window) || !portfolioSectionRef.current) {
+      return stopIdle;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsPortfolioReady(true);
+          observer.disconnect();
+          stopIdle();
+        }
+      },
+      { rootMargin: '650px 0px' }
+    );
+
+    observer.observe(portfolioSectionRef.current);
+
+    return () => {
+      observer.disconnect();
+      stopIdle();
+    };
   }, []);
 
-  const filteredProjects = filter === 'all'
-    ? portfolioData
-    : portfolioData.filter(item => item.category === filter);
+  const filteredProjects = useMemo(() => (
+    filter === 'all'
+      ? portfolioData
+      : portfolioData.filter(item => item.category === filter)
+  ), [filter]);
 
   const filterOptions = [
     { id: 'all', label: 'Todos', icon: null },
@@ -426,7 +450,16 @@ export default function App() {
       <header className={`fixed top-0 w-full z-40 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-md border-b border-gray-900 py-4' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center">
-            <img src="logo-2.png" alt="BigdatIA Logo" className="h-10 md:h-12 w-auto object-contain" />
+            <img
+              src="/logo-2.png"
+              alt="BigdatIA Logo"
+              width="706"
+              height="159"
+              loading="eager"
+              decoding="sync"
+              fetchPriority="high"
+              className="h-10 md:h-12 w-auto object-contain"
+            />
           </div>
 
           {/* Desktop Nav */}
@@ -489,7 +522,7 @@ export default function App() {
       </section>
 
       {/* --- PORTFOLIO SECTION --- */}
-      <section id="portfolio" className="py-24 px-6 bg-black border-t border-gray-900">
+      <section id="portfolio" ref={portfolioSectionRef} className="py-24 px-6 bg-black border-t border-gray-900">
         <div className="container mx-auto max-w-7xl">
           <div className="flex flex-col lg:flex-row justify-between items-center lg:items-end mb-16 gap-8 text-center lg:text-left">
             <div className="flex flex-col items-center lg:items-start w-full lg:w-auto">
@@ -551,13 +584,21 @@ export default function App() {
 
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredProjects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                item={project}
-                onClick={setSelectedProject}
-              />
-            ))}
+            {isPortfolioReady
+              ? filteredProjects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  item={project}
+                  onClick={setSelectedProject}
+                />
+              ))
+              : Array.from({ length: 4 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-[420px] border border-gray-900 bg-[#050505]"
+                  aria-hidden="true"
+                />
+              ))}
           </div>
         </div>
       </section>

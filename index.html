@@ -18,11 +18,9 @@
         border-radius: 50%; animation: spin 1s linear infinite; 
         margin-bottom: 20px;
       }
-      .loader-text {
-        color: white; font-weight: 900; font-size: 24px; 
-        font-style: italic; letter-spacing: -1px;
+      .loader-logo {
+        height: 40px; width: auto;
       }
-      .loader-text span { color: #ccff00; }
       @keyframes spin { to { transform: rotate(360deg); } }
     </style>
   </head>
@@ -30,7 +28,7 @@
     <div id="root">
       <div class="app-loader">
         <div class="loader-spinner"></div>
-        <div class="loader-text"><span>BIG</span>DATIA</div>
+        <img src="/logo-2.png" alt="BigdatIA" class="loader-logo">
       </div>
     </div>
     <script type="module" src="/src/main.jsx"></script>

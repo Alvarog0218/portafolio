@@ -115,12 +115,12 @@ const portfolioData = [
   },
   {
     id: 7,
-    title: "Doña Fermina",
+    title: "Inverbet",
     category: "branding",
-    image: "manual-fermina.png",
-    description: "Creación de marca para arequipes artesanales con licor.",
-    link: "fermina.pdf",
-    tags: ["Packaging", "Brand Strategy"]
+    image: "inverbet.png",
+    description: "Creación manual de marca tecnología predictiva con IA para futbol",
+    link: "inverbet.pdf",
+    tags: ["Branding", "AI"]
   },
   {
     id: 8,
@@ -162,12 +162,12 @@ const portfolioData = [
   },
   {
     id: 12,
-    title: "Fundación De Que Nos Vale (En Construcción)",
+    title: "Inverbet Software",
     category: "web",
-    image: "fundacion.png", // Asegúrate de que este archivo esté en tu carpeta public
-    description: "Proyecto web para la fundación De Que Nos Vale - Jessi Uribe, actualmente en desarrollo.",
-    link: "https://alvarog0218.github.io/fundacion-web/",
-    tags: ["React", "Vite", "GitHub Pages"]
+    image: "inverbet-web.png",
+    description: "Software predictivo con IA - plataforma",
+    link: "https://www.inverbet.pro/",
+    tags: ["IA", "React", "Data Analytics"]
   }
 ];
 
@@ -413,9 +413,9 @@ export default function App() {
       {/* --- HEADER --- */}
       <header className={`fixed top-0 w-full z-40 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-md border-b border-gray-900 py-4' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <h1 className="text-2xl font-black tracking-tighter flex items-center gap-2 italic">
-            <span className="text-[#ccff00]">BIG</span>DATIA
-          </h1>
+          <div className="flex items-center">
+            <img src="logo-2.png" alt="BigdatIA Logo" className="h-10 md:h-12 w-auto object-contain" />
+          </div>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">

@@ -174,6 +174,8 @@ const portfolioData = [
 
 // --- COLORES & ESTILOS PERSONALIZADOS ---
 // Neon Green: #ccff00 (Usaremos lime-400/accent custom)
+const INITIAL_MOBILE_PROJECTS = 4;
+const PROJECTS_PER_MOBILE_BATCH = 4;
 
 const NavLink = ({ href, children, mobile = false, onClick }) => (
   <a
@@ -213,17 +215,15 @@ const scheduleIdle = (callback, timeout = 1200) => {
   return () => window.clearTimeout(timerId);
 };
 
-const getThumbSrc = (image) => {
-  const fileName = image
+const getThumbFileName = (image) => image
     .replace(/\.[^.]+$/, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-  return `/thumbs/${fileName}-sm.jpg`;
-};
+const getThumbSrc = (image, variant = 'sm') => `/thumbs/${getThumbFileName(image)}-${variant}.jpg`;
 
-const ProjectCard = React.memo(({ item, onClick }) => {
+const ProjectCard = React.memo(({ item, onClick, priority = false }) => {
   const getIcon = () => {
     switch (item.category) {
       case 'video': return <Video size={20} />;
@@ -242,19 +242,23 @@ const ProjectCard = React.memo(({ item, onClick }) => {
       {/* Imagen Thumbnail */}
       <div className="relative h-64 overflow-hidden">
         <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all duration-500 z-10" />
-        <img
-          src={getThumbSrc(item.image)}
-          alt={item.title}
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-          onError={(e) => {
-            e.target.onerror = null;
-            // Fallback si la imagen local no carga
-            e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
-          }}
-        />
+        <picture>
+          <source media="(max-width: 767px)" srcSet={getThumbSrc(item.image, 'mobile')} />
+          <img
+            src={getThumbSrc(item.image)}
+            alt={item.title}
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+            fetchPriority={priority ? 'high' : 'low'}
+            sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1023px) calc(50vw - 36px), 25vw"
+            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+            onError={(e) => {
+              e.target.onerror = null;
+              // Fallback si la imagen local no carga
+              e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
+            }}
+          />
+        </picture>
         <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md p-2 text-[#ccff00] border border-[#ccff00]/30 z-20">
           {getIcon()}
         </div>
@@ -311,24 +315,28 @@ const ProjectModal = ({ project, onClose }) => {
                   <video
                     controls
                     preload="metadata"
-                    poster={getThumbSrc(project.image)}
+                    poster={getThumbSrc(project.image, 'mobile')}
                     className="max-w-full max-h-full object-contain"
                     src={project.videoUrl}
                   />
                 </div>
               ) : (
                 /* Image Only for other categories (Video, Branding, Web) */
-                <img
-                  src={`/${project.image}`}
-                  alt={project.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
-                  }}
-                />
+                <picture className="h-full w-full">
+                  <source media="(max-width: 767px)" srcSet={getThumbSrc(project.image, 'mobile')} />
+                  <img
+                    src={getThumbSrc(project.image)}
+                    alt={project.title}
+                    loading="lazy"
+                    decoding="async"
+                    sizes="(max-width: 767px) calc(100vw - 32px), 50vw"
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
+                    }}
+                  />
+                </picture>
               )}
           </div>
 
@@ -404,6 +412,8 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isPortfolioReady, setIsPortfolioReady] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [visibleProjectCount, setVisibleProjectCount] = useState(INITIAL_MOBILE_PROJECTS);
   const portfolioSectionRef = useRef(null);
 
   useEffect(() => {
@@ -412,6 +422,16 @@ export default function App() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const updateViewport = () => setIsMobileView(mediaQuery.matches);
+
+    updateViewport();
+    mediaQuery.addEventListener('change', updateViewport);
+
+    return () => mediaQuery.removeEventListener('change', updateViewport);
   }, []);
 
   useEffect(() => {
@@ -446,6 +466,18 @@ export default function App() {
       ? portfolioData
       : portfolioData.filter(item => item.category === filter)
   ), [filter]);
+
+  const visibleProjects = useMemo(() => (
+    isMobileView
+      ? filteredProjects.slice(0, visibleProjectCount)
+      : filteredProjects
+  ), [filteredProjects, isMobileView, visibleProjectCount]);
+
+  const hasMoreMobileProjects = isMobileView && visibleProjectCount < filteredProjects.length;
+  const selectFilter = (nextFilter) => {
+    setFilter(nextFilter);
+    setVisibleProjectCount(INITIAL_MOBILE_PROJECTS);
+  };
 
   const filterOptions = [
     { id: 'all', label: 'Todos', icon: null },
@@ -510,7 +542,7 @@ export default function App() {
       <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden flex items-center justify-center min-h-[80vh]">
 
         {/* Abstract Geometry Background */}
-        <div className="absolute inset-0 z-0 opacity-20">
+        <div className="absolute inset-0 z-0 hidden opacity-20 md:block">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 border border-[#ccff00] rounded-full blur-[100px]" />
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-[#ccff00] rounded-full blur-[150px]" />
         </div>
@@ -554,7 +586,7 @@ export default function App() {
                   key={opt.id}
                   icon={opt.icon}
                   active={filter === opt.id}
-                  onClick={() => setFilter(opt.id)}
+                  onClick={() => selectFilter(opt.id)}
                 >
                   {opt.label}
                 </FilterButton>
@@ -580,7 +612,7 @@ export default function App() {
                     <button
                       key={opt.id}
                       onClick={() => {
-                        setFilter(opt.id);
+                        selectFilter(opt.id);
                         setIsFilterDropdownOpen(false);
                       }}
                       className={`w-full text-left px-6 py-4 text-sm font-bold uppercase tracking-wider transition-colors flex items-center gap-3
@@ -599,11 +631,12 @@ export default function App() {
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {isPortfolioReady
-              ? filteredProjects.map((project) => (
+              ? visibleProjects.map((project, index) => (
                 <ProjectCard
                   key={project.id}
                   item={project}
                   onClick={setSelectedProject}
+                  priority={index < 2}
                 />
               ))
               : Array.from({ length: 4 }).map((_, index) => (
@@ -614,6 +647,18 @@ export default function App() {
                 />
               ))}
           </div>
+
+          {isPortfolioReady && hasMoreMobileProjects && (
+            <div className="mt-10 flex justify-center md:hidden">
+              <button
+                type="button"
+                onClick={() => setVisibleProjectCount((count) => count + PROJECTS_PER_MOBILE_BATCH)}
+                className="border-2 border-[#ccff00] text-[#ccff00] px-8 py-3 font-black uppercase tracking-wider hover:bg-[#ccff00] hover:text-black transition-all"
+              >
+                Ver mas proyectos
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

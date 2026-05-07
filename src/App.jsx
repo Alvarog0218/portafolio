@@ -174,9 +174,6 @@ const portfolioData = [
 
 // --- COLORES & ESTILOS PERSONALIZADOS ---
 // Neon Green: #ccff00 (Usaremos lime-400/accent custom)
-const INITIAL_MOBILE_PROJECTS = 4;
-const PROJECTS_PER_MOBILE_BATCH = 4;
-
 const NavLink = ({ href, children, mobile = false, onClick }) => (
   <a
     href={href}
@@ -224,6 +221,36 @@ const getThumbFileName = (image) => image
 const getThumbSrc = (image, variant = 'sm') => `/thumbs/${getThumbFileName(image)}-${variant}.jpg`;
 
 const ProjectCard = React.memo(({ item, onClick, priority = false }) => {
+  const cardRef = useRef(null);
+  const [canLoadImage, setCanLoadImage] = useState(false);
+  const shouldLoadImage = priority || canLoadImage;
+
+  useEffect(() => {
+    if (priority) {
+      return undefined;
+    }
+
+    if (!('IntersectionObserver' in window) || !cardRef.current) {
+      const stopIdle = scheduleIdle(() => setCanLoadImage(true), 1800);
+      return stopIdle;
+    }
+
+    const isMobileViewport = window.matchMedia('(max-width: 767px)').matches;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCanLoadImage(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: isMobileViewport ? '180px 0px' : '520px 0px' }
+    );
+
+    observer.observe(cardRef.current);
+
+    return () => observer.disconnect();
+  }, [priority]);
+
   const getIcon = () => {
     switch (item.category) {
       case 'video': return <Video size={20} />;
@@ -236,29 +263,34 @@ const ProjectCard = React.memo(({ item, onClick, priority = false }) => {
 
   return (
     <div
+      ref={cardRef}
       className="group relative bg-black rounded-sm overflow-hidden border border-gray-900 hover:border-[#ccff00] transition-all duration-300 cursor-pointer"
       onClick={() => onClick(item)}
     >
       {/* Imagen Thumbnail */}
       <div className="relative h-64 overflow-hidden">
         <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-all duration-500 z-10" />
-        <picture>
-          <source media="(max-width: 767px)" srcSet={getThumbSrc(item.image, 'mobile')} />
-          <img
-            src={getThumbSrc(item.image)}
-            alt={item.title}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            fetchPriority={priority ? 'high' : 'low'}
-            sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1023px) calc(50vw - 36px), 25vw"
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-            onError={(e) => {
-              e.target.onerror = null;
-              // Fallback si la imagen local no carga
-              e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
-            }}
-          />
-        </picture>
+        {shouldLoadImage ? (
+          <picture>
+            <source media="(max-width: 767px)" srcSet={getThumbSrc(item.image, 'mobile')} />
+            <img
+              src={getThumbSrc(item.image)}
+              alt={item.title}
+              loading={priority ? 'eager' : 'lazy'}
+              decoding="async"
+              fetchPriority={priority ? 'high' : 'low'}
+              sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1023px) calc(50vw - 36px), 25vw"
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+              onError={(e) => {
+                e.target.onerror = null;
+                // Fallback si la imagen local no carga
+                e.target.src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800";
+              }}
+            />
+          </picture>
+        ) : (
+          <div className="h-full w-full bg-[#070707]" aria-hidden="true" />
+        )}
         <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-md p-2 text-[#ccff00] border border-[#ccff00]/30 z-20">
           {getIcon()}
         </div>
@@ -412,8 +444,6 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [isPortfolioReady, setIsPortfolioReady] = useState(false);
-  const [isMobileView, setIsMobileView] = useState(false);
-  const [visibleProjectCount, setVisibleProjectCount] = useState(INITIAL_MOBILE_PROJECTS);
   const portfolioSectionRef = useRef(null);
 
   useEffect(() => {
@@ -422,16 +452,6 @@ export default function App() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 767px)');
-    const updateViewport = () => setIsMobileView(mediaQuery.matches);
-
-    updateViewport();
-    mediaQuery.addEventListener('change', updateViewport);
-
-    return () => mediaQuery.removeEventListener('change', updateViewport);
   }, []);
 
   useEffect(() => {
@@ -467,16 +487,8 @@ export default function App() {
       : portfolioData.filter(item => item.category === filter)
   ), [filter]);
 
-  const visibleProjects = useMemo(() => (
-    isMobileView
-      ? filteredProjects.slice(0, visibleProjectCount)
-      : filteredProjects
-  ), [filteredProjects, isMobileView, visibleProjectCount]);
-
-  const hasMoreMobileProjects = isMobileView && visibleProjectCount < filteredProjects.length;
   const selectFilter = (nextFilter) => {
     setFilter(nextFilter);
-    setVisibleProjectCount(INITIAL_MOBILE_PROJECTS);
   };
 
   const filterOptions = [
@@ -631,7 +643,7 @@ export default function App() {
           {/* Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {isPortfolioReady
-              ? visibleProjects.map((project, index) => (
+              ? filteredProjects.map((project, index) => (
                 <ProjectCard
                   key={project.id}
                   item={project}
@@ -647,18 +659,6 @@ export default function App() {
                 />
               ))}
           </div>
-
-          {isPortfolioReady && hasMoreMobileProjects && (
-            <div className="mt-10 flex justify-center md:hidden">
-              <button
-                type="button"
-                onClick={() => setVisibleProjectCount((count) => count + PROJECTS_PER_MOBILE_BATCH)}
-                className="border-2 border-[#ccff00] text-[#ccff00] px-8 py-3 font-black uppercase tracking-wider hover:bg-[#ccff00] hover:text-black transition-all"
-              >
-                Ver mas proyectos
-              </button>
-            </div>
-          )}
         </div>
       </section>
 
